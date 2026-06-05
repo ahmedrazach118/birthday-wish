@@ -606,7 +606,7 @@ const toggleMeowMusic = (e: React.MouseEvent) => {
           <h1 className="birthday-title">
             Happy Birthday My Sweet Meow! 🎉🐾😻
           </h1>
-          <p className="subtitle">To the love of my life, xyz 💕🐱</p>
+          <p className="subtitle">To the cutest meow of my life, Esha 💕🐱</p>
           <div className="cat-emoji">😻🎀🐾💖</div>
         </div>
 
@@ -707,7 +707,7 @@ const toggleMeowMusic = (e: React.MouseEvent) => {
             <div className="quote-popup">
               <div className="quote-icon">💖</div>
               <p className="quote-text">"{currentQuote}"</p>
-              <div className="quote-author">— Forever yours, xyz 💕🐾</div>
+              <div className="quote-author">— Cute Meow! Esha 💕🐾</div>
             </div>
           )}
 
