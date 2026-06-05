@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import './App.css';
 
 function App() {
@@ -32,46 +32,53 @@ function App() {
   const mouseTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const quoteTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  const loveQuotes = [
-    "Every day with you is my favorite day. ❤️",
-    "You make my heart smile like a happy kitten. 😊🐱",
-    "Meeting you was fate... but falling in love with you was beyond my control. 💕",
-    "In a sea of people, my eyes will always search only for you. 🌊",
-    "I love you more than all the stars in the sky. ✨",
-    "You're the purr-fect girlfriend! 🐱💕",
-    "Every Meow from you makes my day brighter! 🎀",
-    "I'm feline lucky to have you! 🐾",
-    "Your love is my favorite adventure. 🗺️🐱",
-    "You + Me = Endless cuddles and meows 💖",
-    "Your smile is my favorite view. 😊",
-    "You make my world complete. 🌍",
-    "I fall in love with you more every single day. 💘",
-    "You're my sunshine on cloudy days. ☀️",
-    "Being with you is my favorite place to be. 🏠",
-    "You're the beat in my heart. 💓",
-    "Every love story is beautiful, but ours is my favorite. 📖",
-    "You're the best thing that ever happened to me. 🎁",
-    "My love for you grows stronger every moment. 📈",
-    "You're my happily ever after. 👸",
-    "I love you more than words can express. 💌",
-    "You're the reason I believe in magic. ✨",
-    "Your love is my greatest treasure. 💎",
-    "I'm so grateful for every moment with you. 🙏",
-    "You make everything better just by being you. 🌟"
-  ];
+const loveQuotes = useMemo(() => [
+  "Every day with you is my favorite day. ❤️",
+  "You make my heart smile like a happy kitten. 😊🐱",
+  "Meeting you was fate... but falling in love with you was beyond my control. 💕",
+  "In a sea of people, my eyes will always search only for you. 🌊",
+  "I love you more than all the stars in the sky. ✨",
+  "You're the purr-fect girlfriend! 🐱💕",
+  "Every Meow from you makes my day brighter! 🎀",
+  "I'm feline lucky to have you! 🐾",
+  "Your love is my favorite adventure. 🗺️🐱",
+  "You + Me = Endless cuddles and meows 💖",
+  "Your smile is my favorite view. 😊",
+  "You make my world complete. 🌍",
+  "I fall in love with you more every single day. 💘",
+  "You're my sunshine on cloudy days. ☀️",
+  "Being with you is my favorite place to be. 🏠",
+  "You're the beat in my heart. 💓",
+  "Every love story is beautiful, but ours is my favorite. 📖",
+  "You're the best thing that ever happened to me. 🎁",
+  "My love for you grows stronger every moment. 📈",
+  "You're my happily ever after. 👸",
+  "I love you more than words can express. 💌",
+  "You're the reason I believe in magic. ✨",
+  "Your love is my greatest treasure. 💎",
+  "I'm so grateful for every moment with you. 🙏",
+  "You make everything better just by being you. 🌟"
+], []);
 
-  const loveMessages = [
-    "💖 Sending you a thousand kisses! 💖",
-    "🐱 Meow! I love you to the moon and back! 🐱",
-    "💕 You're the best thing that ever happened to me! 💕",
-    "🎀 Every day with you is a blessing! 🎀",
-    "😻 You make my heart purr with joy! 😻",
-    "💗 You're my everything! 💗"
-  ];
+const loveMessages = useMemo(() => [
+  "💖 Sending you a thousand kisses! 💖",
+  "🐱 Meow! I love you to the moon and back! 🐱",
+  "💕 You're the best thing that ever happened to me! 💕",
+  "🎀 Every day with you is a blessing! 🎀",
+  "😻 You make my heart purr with joy! 😻",
+  "💗 You're my everything! 💗"
+], []);
 
-  const meowSounds = ["Meow! 🐱", "Purrrr... 💕", "Mew! 🎀", "Mrrow! 😻", "Meow meow! 💖", "Nyaa~ 😺", "Purr purr~ 🐱"];
+const meowSounds = useMemo(() => [
+  "Meow! 🐱",
+  "Purrrr... 💕",
+  "Mew! 🎀",
+  "Mrrow! 😻",
+  "Meow meow! 💖",
+  "Nyaa~ 😺",
+  "Purr purr~ 🐱"
+], []);
 
-  // Function to play cute kitten meow sound using Web Audio API
   const playCuteKittenMeow = useCallback(() => {
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
