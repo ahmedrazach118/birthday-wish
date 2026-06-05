@@ -605,7 +605,7 @@ const meowSounds = useMemo(() => [
           <h1 className="birthday-title">
             Happy Birthday My Sweet Meow! 🎉🐾😻
           </h1>
-          <p className="subtitle">To the love of my life, xyz 💕🐱</p>
+          <p className="subtitle">To the cute meow of my life, Esha! 💕🐱</p>
           <div className="cat-emoji">😻🎀🐾💖</div>
         </div>
 
@@ -706,7 +706,7 @@ const meowSounds = useMemo(() => [
             <div className="quote-popup">
               <div className="quote-icon">💖</div>
               <p className="quote-text">"{currentQuote}"</p>
-              <div className="quote-author">— Forever yours, xyz 💕🐾</div>
+              <div className="quote-author">— Cute Meow! Esha 💕🐾</div>
             </div>
           )}
 
