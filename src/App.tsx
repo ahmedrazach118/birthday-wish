@@ -18,7 +18,6 @@ function App() {
   const [isMeowMusicPlaying, setIsMeowMusicPlaying] = useState(false);
   const [mouseScore, setMouseScore] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
-  const [gameActive, setGameActive] = useState(true);
   const [showLoveMessage, setShowLoveMessage] = useState(false);
   const [loveMessage, setLoveMessage] = useState('');
   const [floatingCats, setFloatingCats] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -239,6 +238,23 @@ function App() {
     }
   }, [audioInitialized]);
 
+  const triggerBigCelebration = useCallback(() => {
+    setShowConfetti(true);
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => playMeowSound(), i * 200);
+    }
+    setTimeout(() => setShowConfetti(false), 8000);
+    
+    const wishes = [
+      "🎂 Happy Birthday! 🎂",
+      "🎉 You're amazing! 🎉",
+      "💖 Best day ever! 💖",
+      "🐱 Meow! Celebrate! 🐱"
+    ];
+    setBirthdayWishes(wishes);
+    setTimeout(() => setBirthdayWishes([]), 5000);
+  }, [playMeowSound]);
+
   useEffect(() => {
     const target = new Date(new Date().getFullYear(), 5, 18);
     const today = new Date();
@@ -252,7 +268,7 @@ function App() {
       loveMusicRef.current.volume = 0.2;
     }
 
-    // Meow music from your downloaded file
+    // Meow music
     meowMusicRef.current = new Audio("/meow.mp3");
     if (meowMusicRef.current) {
       meowMusicRef.current.loop = true;
@@ -297,35 +313,16 @@ function App() {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [targetDate]);
-
-  const triggerBigCelebration = () => {
-    setShowConfetti(true);
-    for (let i = 0; i < 5; i++) {
-      setTimeout(() => playMeowSound(), i * 200);
-    }
-    setTimeout(() => setShowConfetti(false), 8000);
-    
-    const wishes = [
-      "🎂 Happy Birthday! 🎂",
-      "🎉 You're amazing! 🎉",
-      "💖 Best day ever! 💖",
-      "🐱 Meow! Celebrate! 🐱"
-    ];
-    setBirthdayWishes(wishes);
-    setTimeout(() => setBirthdayWishes([]), 5000);
-  };
+  }, [targetDate, triggerBigCelebration]);
 
   const moveMouse = useCallback(() => {
-    if (gameActive) {
-      const newX = Math.random() * 90 + 5;
-      const newY = Math.random() * 80 + 10;
-      setMousePosition({ x: newX, y: newY });
-      
-      if (mouseTimeoutRef.current) clearTimeout(mouseTimeoutRef.current);
-      mouseTimeoutRef.current = setTimeout(() => moveMouse(), 800 + Math.random() * 500);
-    }
-  }, [gameActive]);
+    const newX = Math.random() * 90 + 5;
+    const newY = Math.random() * 80 + 10;
+    setMousePosition({ x: newX, y: newY });
+    
+    if (mouseTimeoutRef.current) clearTimeout(mouseTimeoutRef.current);
+    mouseTimeoutRef.current = setTimeout(() => moveMouse(), 800 + Math.random() * 500);
+  }, []);
 
   useEffect(() => {
     moveMouse();
@@ -357,7 +354,7 @@ function App() {
       setShowLoveMessage(true);
       setTimeout(() => setShowLoveMessage(false), 2000);
     }
-  }, [initAudio, playMeowSound]);
+  }, [initAudio, playMeowSound, loveMessages]);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     initAudio();
@@ -403,9 +400,9 @@ function App() {
 
     if (quoteTimeoutRef.current) clearTimeout(quoteTimeoutRef.current);
     quoteTimeoutRef.current = setTimeout(() => setShowQuote(false), 6000);
-  }, [clicks, loveMeter, loveQuotes, initAudio, playKissSound, playMeowSound]);
+  }, [clicks, loveMeter, loveQuotes, initAudio, playKissSound, playMeowSound, triggerBigCelebration, meowSounds]);
 
-  const petTheCat = (e: React.MouseEvent) => {
+  const petTheCat = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     initAudio();
     setPetCount(prev => prev + 1);
@@ -423,48 +420,43 @@ function App() {
       }, 200);
     }
 
-    if (petCount % 5 === 4) {
-      setLoveMeter(prev => Math.min(100, prev + 8));
-      playMagicSound();
-    }
-  };
+    setPetCount(prev => {
+      const newCount = prev + 1;
+      if (newCount % 5 === 0) {
+        setLoveMeter(prevMeter => Math.min(100, prevMeter + 8));
+        playMagicSound();
+      }
+      return newCount;
+    });
+  }, [initAudio, playMeowSound, playMagicSound, meowSounds]);
 
-  const toggleLoveMusic = (e: React.MouseEvent) => {
+  const toggleLoveMusic = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     initAudio();
     if (loveMusicRef.current) {
       if (isLoveMusicPlaying) {
         loveMusicRef.current.pause();
+        setIsLoveMusicPlaying(false);
       } else {
         loveMusicRef.current.play().catch(() => {});
+        setIsLoveMusicPlaying(true);
       }
-      setIsLoveMusicPlaying(!isLoveMusicPlaying);
     }
-  };
+  }, [isLoveMusicPlaying, initAudio]);
 
-const toggleMeowMusic = (e: React.MouseEvent) => {
-  e.stopPropagation();
-  initAudio();
-  if (meowMusicRef.current) {
-    if (isMeowMusicPlaying) {
-      meowMusicRef.current.pause();
-      setIsMeowMusicPlaying(false);
-    } else {
-      meowMusicRef.current.play()
-        .then(() => {
-          console.log("Meow music playing successfully!");
-          setIsMeowMusicPlaying(true);
-        })
-        .catch((error) => {
-          console.error("Error playing meow music:", error);
-          console.log("Audio file path:", meowMusicRef.current?.src);
-          alert("Could not play meow.mp3. Make sure the file is in the 'public' folder!");
-        });
+  const toggleMeowMusic = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    initAudio();
+    if (meowMusicRef.current) {
+      if (isMeowMusicPlaying) {
+        meowMusicRef.current.pause();
+        setIsMeowMusicPlaying(false);
+      } else {
+        meowMusicRef.current.play().catch(() => {});
+        setIsMeowMusicPlaying(true);
+      }
     }
-  } else {
-    console.error("meowMusicRef is null");
-  }
-};
+  }, [isMeowMusicPlaying, initAudio]);
 
   const createFloatingHearts = useCallback(() => {
     const interval = setInterval(() => {
@@ -525,14 +517,14 @@ const toggleMeowMusic = (e: React.MouseEvent) => {
       <div className="music-controls">
         <button 
           onClick={toggleLoveMusic}
-          className="music-toggle love-music"
+          className="music-toggle love-music-btn"
         >
           {isLoveMusicPlaying ? '🎵 Stop Love Music' : '🎵 Play Love Music'}
         </button>
         
         <button 
           onClick={toggleMeowMusic}
-          className="music-toggle meow-music"
+          className="music-toggle meow-music-btn"
         >
           {isMeowMusicPlaying ? '🐱 Stop Meow Music' : '🐱 Play Meow Music'}
         </button>
@@ -606,7 +598,7 @@ const toggleMeowMusic = (e: React.MouseEvent) => {
           <h1 className="birthday-title">
             Happy Birthday My Sweet Meow! 🎉🐾😻
           </h1>
-          <p className="subtitle">To the cutest meow of my life, Esha 💕🐱</p>
+          <p className="subtitle">To the love of my life, xyz 💕🐱</p>
           <div className="cat-emoji">😻🎀🐾💖</div>
         </div>
 
@@ -707,7 +699,7 @@ const toggleMeowMusic = (e: React.MouseEvent) => {
             <div className="quote-popup">
               <div className="quote-icon">💖</div>
               <p className="quote-text">"{currentQuote}"</p>
-              <div className="quote-author">— Cute Meow! Esha 💕🐾</div>
+              <div className="quote-author">— Forever yours, xyz 💕🐾</div>
             </div>
           )}
 
